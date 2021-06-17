@@ -28,7 +28,7 @@ public class PlaySound {
 
     }
 
-
+    //ランダム再生用
     public void PlayVoice(){
         Random rand = new Random();
         int r = rand.nextInt(3);
