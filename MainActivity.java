@@ -101,15 +101,86 @@ public class MainActivity extends AppCompatActivity {
         }
         return true;
     }
-
     //温度を取得しようとしたなにか
     public String C() {
         //センサー名が出てきちゃっただよ
         temperature =mSensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
         Log.d("aaa",String.valueOf(temperature));
         return String.valueOf(temperature);
+    }
+    //センサーのリスナー@@
+    private Sensor mAccelerometerSensor;
+    public void onCreate(Bundle savedInstanceState) {
+	    super.onCreate(savedInstanceState);
+	    setContentView(R.layout.main);
+	    // センサーマネージャを獲得する
+	    mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+	    // マネージャから加速度センサーオブジェクトを取得
+	    mAccelerometerSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+    }
+    //@
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        if(event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+         StringBuilder builder = new StringBuilder();
+         // X軸
+         float x = event.values[0];
+         // Y軸
+         float y = event.values[1];
+         // Z軸
+         float z = event.values[2];
 
+         builder.append("X : " + (x) + "\n");
+         builder.append("Y : " + (y) + "\n");
+         builder.append("Z : " + (z) + "\n");
+
+         // Logに出力
+         Log.d(TAG, builder.toString());
+     }
+    }
+    @Override
+protected void onResume() {
+     super.onResume();
+
+     // 200msに一度SensorEventを観測するリスナを登録
+     mSensorManager.registerListener(this, mAccelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
 }
 
+@Override
+protected void onPause() {
+     super.onPause();
 
+     // 非アクティブ時にSensorEventをとらないようにリスナの登録解除
+     mSensorManager.unregisterListener(this);
+}
+}
+
+public class AccelerometerSampleActivity extends Activity implements SensorEventListener {
+
+    /** センサーマネージャオブジェクト */
+    private SensorManager mSensorManager;
+
+    /** 加速度センサーオブジェクト */
+    private Sensor mAccelerometerSensor;
+
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.main);
+
+        // センサーマネージャを獲得する
+        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+
+        // マネージャから加速度センサーオブジェクトを取得
+        mAccelerometerSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
 }
